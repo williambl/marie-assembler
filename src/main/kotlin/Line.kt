@@ -1,7 +1,11 @@
 sealed class Line(val label: String?) {
     class InstructionLine(private val instruction: Instruction, private val operandLabel: String?, label: String?): Line(label) {
         override fun toMachineCode(labels: Map<String, UShort>): UShort {
-            val operand = labels[operandLabel] ?: throw IllegalStateException()
+            val operand = if (operandLabel == null) {
+                0u
+            } else {
+                labels[operandLabel] ?: throw IllegalStateException()
+            }
             return (instruction.opcode shl 12) or operand
         }
 
@@ -16,7 +20,7 @@ sealed class Line(val label: String?) {
 
     companion object {
         fun parse(line: String): Line {
-            val label = line.substringBefore(',', "")
+            val label = line.substringBefore(',', "").takeIf(String::isNotEmpty)
             val instructionParts = line.substringAfter(',').trim().split(' ')
 
             if (instructionParts.size !in 1..2) {
@@ -30,7 +34,7 @@ sealed class Line(val label: String?) {
                 ?: throw IllegalArgumentException()
         }
 
-        private fun tryParseInstructionLine(label: String, instructionName: String, operandLabel: String?): InstructionLine? {
+        private fun tryParseInstructionLine(label: String?, instructionName: String, operandLabel: String?): InstructionLine? {
             return InstructionLine(
                 Instruction.values().find { it.name == instructionName } ?: return null,
                 operandLabel,
@@ -38,7 +42,7 @@ sealed class Line(val label: String?) {
             )
         }
 
-        private fun tryParseDataLine(label: String, dataFormat: String, dataValueString: String?): DataLine? {
+        private fun tryParseDataLine(label: String?, dataFormat: String, dataValueString: String?): DataLine? {
             dataValueString ?: return null
 
             val value = when (dataFormat) {
