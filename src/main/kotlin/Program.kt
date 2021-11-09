@@ -1,6 +1,6 @@
 class Program {
     private val labels: MutableMap<String, Line> = mutableMapOf()
-    private val lines: MutableList<Line> = mutableListOf()
+    private val lines: MutableList<Line> = mutableListOf(Line.DummyLine())
 
     fun addLine(string: String) {
         val line = Line.parse(string)

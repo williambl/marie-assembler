@@ -16,6 +16,10 @@ sealed class Line(val label: String?) {
         override fun toMachineCode(labels: Map<String, UShort>): UShort = data
     }
 
+    class DummyLine(): Line("NULL") {
+        override fun toMachineCode(labels: Map<String, UShort>): UShort = 0u
+    }
+
     abstract fun toMachineCode(labels: Map<String, UShort>): UShort
 
     companion object {
