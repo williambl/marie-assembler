@@ -1,6 +1,18 @@
 sealed class Line(val label: String?) {
-    class InstructionLine(val instruction: Instruction, val addressLabel: String?, label: String?): Line(label)
-    class DataLine(val data: UInt, label: String?): Line(label)
+    class InstructionLine(private val instruction: Instruction, private val operandLabel: String?, label: String?): Line(label) {
+        override fun toMachineCode(labels: Map<String, UShort>): UShort {
+            val operand = labels[operandLabel] ?: throw IllegalStateException()
+            return (instruction.opcode shl 12) or operand
+        }
+
+        private infix fun UByte.shl(bitCount: Int): UShort = (instruction.opcode.toUInt() shl bitCount).toUShort()
+    }
+
+    class DataLine(private val data: UShort, label: String?): Line(label) {
+        override fun toMachineCode(labels: Map<String, UShort>): UShort = data
+    }
+
+    abstract fun toMachineCode(labels: Map<String, UShort>): UShort
 
     companion object {
         fun parse(line: String): Line {
@@ -30,9 +42,9 @@ sealed class Line(val label: String?) {
             dataValueString ?: return null
 
             val value = when (dataFormat) {
-                "BIN" -> dataValueString.toUInt(2)
-                "DEC" -> dataValueString.toUInt(10)
-                "HEX" -> dataValueString.toUInt(16)
+                "BIN" -> dataValueString.toUShort(2)
+                "DEC" -> dataValueString.toUShort(10)
+                "HEX" -> dataValueString.toUShort(16)
                 else -> return null
             }
 

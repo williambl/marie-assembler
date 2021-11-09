@@ -1,4 +1,10 @@
 class Program {
-    val labels: MutableMap<String, Line> = mutableMapOf()
-    val lines: MutableList<Line> = mutableListOf()
+    private val labels: MutableMap<String, Line> = mutableMapOf()
+    private val lines: MutableList<Line> = mutableListOf()
+
+    fun assemble(): List<UShort> {
+        val labelValues = labels.mapValues { (_, v) -> lines.indexOf(v).toUShort() }
+
+        return lines.map { it.toMachineCode(labelValues) }
+    }
 }
