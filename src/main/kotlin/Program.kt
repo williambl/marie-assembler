@@ -3,7 +3,7 @@ class Program {
     private val lines: MutableList<Line> = mutableListOf()
 
     fun addLine(string: String) {
-        val line = Line.parse(string.substringBefore('/'))
+        val line = Line.parse(string)
         lines.add(line)
         if (line.label != null) {
             labels[line.label] = line
@@ -11,7 +11,7 @@ class Program {
     }
 
     fun assemble(): List<UShort> {
-        val labelValues = labels.mapValues { (_, v) -> (lines.indexOf(v)+1).toUShort() }
+        val labelValues = labels.mapValues { (_, v) -> lines.indexOf(v).toUShort() }
 
         return lines.map { it.toMachineCode(labelValues) }
     }

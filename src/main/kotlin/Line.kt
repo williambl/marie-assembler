@@ -1,10 +1,10 @@
 sealed class Line(val label: String?) {
     class InstructionLine(private val instruction: Instruction, private val operandLabel: String?, label: String?): Line(label) {
         override fun toMachineCode(labels: Map<String, UShort>): UShort {
-            val operand = if (operandLabel == null) {
-                0u
-            } else {
-                labels[operandLabel] ?: throw IllegalStateException()
+            val operand = when {
+                operandLabel == null -> 0u
+                operandLabel.toUIntOrNull() != null -> operandLabel.toUShort()
+                else -> labels[operandLabel] ?: throw IllegalStateException()
             }
             return (instruction.opcode shl 12) or operand
         }

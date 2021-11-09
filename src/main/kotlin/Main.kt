@@ -17,14 +17,14 @@ class Assembler: CliktCommand() {
         val assembled = Program().also { program ->
             if (input.isEmpty()) {
                 while (true) {
-                    program.addLine(readLine() ?: break)
+                    program.addLine((readLine() ?: break).substringBefore('/').trim().takeIf(String::isNotEmpty) ?: continue)
                 }
             } else {
                 input
                     .map(Path::toFile)
                     .map(File::inputStream)
                     .map(InputStream::class::cast)
-                    .reduce { acc, fileInputStream -> SequenceInputStream(acc, fileInputStream) }
+                    .reduce(::SequenceInputStream)
                     .reader()
                     .forEachLine(program::addLine)
             }
@@ -33,7 +33,7 @@ class Assembler: CliktCommand() {
         output
             ?.let(Path::toFile)
             ?.also(File::createNewFile)
-            ?.writeBytes(assembled.flatMap(UShort::splitToUBytes).map { it.toByte() }.toByteArray())
+            ?.writeBytes(assembled.flatMap(UShort::splitToUBytes).map(UByte::toByte).toByteArray())
 
             ?: assembled.forEach { echo(it.toString(16)) }
     }
