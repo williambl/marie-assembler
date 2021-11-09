@@ -3,7 +3,7 @@ class Program {
     private val lines: MutableList<Line> = mutableListOf()
 
     fun addLine(string: String) {
-        val line = Line.parse(string)
+        val line = Line.parse(string.substringBefore('/'))
         lines.add(line)
         if (line.label != null) {
             labels[line.label] = line
