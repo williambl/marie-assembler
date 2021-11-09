@@ -6,6 +6,12 @@ enum class Instruction(val opcode: UByte) {
     Input(0x5u),
     Output(0x6u),
     Halt(0x7u),
-    SkipCond(0x8u),
-    Jump(0x9u)
+    Skipcond(0x8u),
+    Jump(0x9u),
+    Clear(0xau),
+    AddI(0xbu),
+    JumpI(0xcu),
+    LoadI(0xdu),
+    StoreI(0xeu),
+    JnS(0x0u)
 }
