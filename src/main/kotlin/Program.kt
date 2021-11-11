@@ -4,9 +4,11 @@ class Program {
 
     fun addLine(string: String) {
         val line = Line.parse(string)
-        lines.add(line)
-        if (line.label != null) {
-            labels[line.label] = line
+        if (line != null) {
+            lines.add(line)
+            if (line.label != null) {
+                labels[line.label] = line
+            }
         }
     }
 

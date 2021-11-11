@@ -17,7 +17,7 @@ class Assembler: CliktCommand() {
         val assembled = Program().also { program ->
             if (input.isEmpty()) {
                 while (true) {
-                    program.addLine((readLine() ?: break).substringBefore('/').trim().takeIf(String::isNotEmpty) ?: continue)
+                    program.addLine((readLine() ?: break).trim().takeIf(String::isNotEmpty) ?: continue)
                 }
             } else {
                 input

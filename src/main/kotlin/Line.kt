@@ -23,32 +23,29 @@ sealed class Line(val label: String?) {
     abstract fun toMachineCode(labels: Map<String, UShort>): UShort
 
     companion object {
-        fun parse(line: String): Line {
-            val label = line.substringBefore(',', "").takeIf(String::isNotEmpty)
-            val instructionParts = line.substringAfter(',').trim().split(' ')
+        private val lineRegex = Regex("""^(?:\h*(?:(\w+),)?\h*(\w+)\h*(\w+)?\h*(?:/[^\v]*)?)|(?:/[^\v]*)$""")
 
-            if (instructionParts.size !in 1..2) {
-                throw IllegalArgumentException()
+        fun parse(line: String): Line? {
+            val (label, instruction, operand) = lineRegex.matchEntire(line)?.destructured ?: throw IllegalArgumentException()
+
+            if (instruction.isEmpty()) {
+                return null
             }
 
-            val (firstPart, secondPart) = instructionParts + listOf<String?>(null)
-
-            return tryParseInstructionLine(label, firstPart ?: "", secondPart)
-                ?: tryParseDataLine(label, firstPart ?: "", secondPart)
+            return tryParseInstructionLine(label, instruction, operand)
+                ?: tryParseDataLine(label, instruction, operand)
                 ?: throw IllegalArgumentException()
         }
 
-        private fun tryParseInstructionLine(label: String?, instructionName: String, operandLabel: String?): InstructionLine? {
+        private fun tryParseInstructionLine(label: String?, instructionName: String, operandLabel: String): InstructionLine? {
             return InstructionLine(
                 Instruction.values().find { it.name == instructionName } ?: return null,
-                operandLabel,
+                operandLabel.takeIf(String::isNotEmpty),
                 label
             )
         }
 
-        private fun tryParseDataLine(label: String?, dataFormat: String, dataValueString: String?): DataLine? {
-            dataValueString ?: return null
-
+        private fun tryParseDataLine(label: String?, dataFormat: String, dataValueString: String): DataLine? {
             val value = when (dataFormat) {
                 "BIN" -> dataValueString.toUShort(2)
                 "DEC" -> dataValueString.toUShort(10)
