@@ -33,7 +33,7 @@ class Assembler: CliktCommand() {
         output
             ?.let(Path::toFile)
             ?.also(File::createNewFile)
-            ?.writeBytes(assembled.flatMap(UShort::splitToUBytes).map(UByte::toByte).toByteArray())
+            ?.writeBytes(assembled.flatMap(Short::splitToBytes).toByteArray())
 
             ?: assembled.forEach { echo(it.toString(16)) }
     }
@@ -41,4 +41,4 @@ class Assembler: CliktCommand() {
 
 fun main(args: Array<String>) = Assembler().main(args)
 
-private fun UShort.splitToUBytes() = listOf((this.toUInt() shr 8).toUByte(), this.toUByte())
+private fun Short.splitToBytes() = listOf((this.toUInt() shr 8).toByte(), this.toByte())

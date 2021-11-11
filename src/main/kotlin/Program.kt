@@ -12,8 +12,8 @@ class Program {
         }
     }
 
-    fun assemble(): List<UShort> {
-        val labelValues = labels.mapValues { (_, v) -> lines.indexOf(v).toUShort() }
+    fun assemble(): List<Short> {
+        val labelValues = labels.mapValues { (_, v) -> lines.indexOf(v).toShort() }
 
         return lines.map { it.toMachineCode(labelValues) }
     }

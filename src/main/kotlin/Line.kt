@@ -1,26 +1,28 @@
+import kotlin.experimental.or
+
 sealed class Line(val label: String?) {
+    abstract fun toMachineCode(labels: Map<String, Short>): Short
+
     class InstructionLine(private val instruction: Instruction, private val operandLabel: String?, label: String?): Line(label) {
-        override fun toMachineCode(labels: Map<String, UShort>): UShort {
+        override fun toMachineCode(labels: Map<String, Short>): Short {
             val operand = when {
-                operandLabel == null -> 0u
-                operandLabel.toUIntOrNull() != null -> operandLabel.toUShort()
+                operandLabel == null -> 0
+                operandLabel.toShortOrNull() != null -> operandLabel.toShort()
                 else -> labels[operandLabel] ?: throw IllegalStateException()
             }
             return (instruction.opcode shl 12) or operand
         }
 
-        private infix fun UByte.shl(bitCount: Int): UShort = (instruction.opcode.toUInt() shl bitCount).toUShort()
+        private infix fun Byte.shl(bitCount: Int): Short = (instruction.opcode.toUInt() shl bitCount).toShort()
     }
 
-    class DataLine(private val data: UShort, label: String?): Line(label) {
-        override fun toMachineCode(labels: Map<String, UShort>): UShort = data
+    class DataLine(private val data: Short, label: String?): Line(label) {
+        override fun toMachineCode(labels: Map<String, Short>): Short = data
     }
 
-    class DummyLine(): Line("NULL") {
-        override fun toMachineCode(labels: Map<String, UShort>): UShort = 0u
+    class DummyLine : Line("NULL") {
+        override fun toMachineCode(labels: Map<String, Short>): Short = 0
     }
-
-    abstract fun toMachineCode(labels: Map<String, UShort>): UShort
 
     companion object {
         private val lineRegex = Regex("""^(?:\h*(?:(\w+),)?\h*(\w+)\h*(\w+)?\h*(?:/[^\v]*)?)|(?:/[^\v]*)$""")
@@ -47,9 +49,9 @@ sealed class Line(val label: String?) {
 
         private fun tryParseDataLine(label: String?, dataFormat: String, dataValueString: String): DataLine? {
             val value = when (dataFormat) {
-                "BIN" -> dataValueString.toUShort(2)
-                "DEC" -> dataValueString.toUShort(10)
-                "HEX" -> dataValueString.toUShort(16)
+                "BIN" -> dataValueString.toShort(2)
+                "DEC" -> dataValueString.toShort(10)
+                "HEX" -> dataValueString.toShort(16)
                 else -> return null
             }
 

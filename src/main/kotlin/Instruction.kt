@@ -1,17 +1,17 @@
-enum class Instruction(val opcode: UByte) {
-    Load(0x1u),
-    Store(0x2u),
-    Add(0x3u),
-    Subt(0x4u),
-    Input(0x5u),
-    Output(0x6u),
-    Halt(0x7u),
-    Skipcond(0x8u),
-    Jump(0x9u),
-    Clear(0xau),
-    AddI(0xbu),
-    JumpI(0xcu),
-    LoadI(0xdu),
-    StoreI(0xeu),
-    JnS(0x0u)
+enum class Instruction(val opcode: Byte) {
+    Load(0x1),
+    Store(0x2),
+    Add(0x3),
+    Subt(0x4),
+    Input(0x5),
+    Output(0x6),
+    Halt(0x7),
+    Skipcond(0x8),
+    Jump(0x9),
+    Clear(0xa),
+    AddI(0xb),
+    JumpI(0xc),
+    LoadI(0xd),
+    StoreI(0xe),
+    JnS(0x0)
 }
