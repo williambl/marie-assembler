@@ -7,7 +7,7 @@ sealed class Line(val label: String?) {
         override fun toMachineCode(labels: Map<String, Short>): Short {
             val operand = when {
                 operandLabel == null -> 0
-                operandLabel.toShortOrNull() != null -> operandLabel.toShort()
+                operandLabel.toShortOrNull(16) != null -> operandLabel.toShort(16)
                 else -> labels[operandLabel] ?: throw IllegalStateException()
             }
             return (instruction.opcode shl 12) or operand
